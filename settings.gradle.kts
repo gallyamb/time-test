@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("./build-logic")
+    includeBuild("build-logic")
 }
 
 dependencyResolutionManagement {
@@ -9,6 +9,11 @@ dependencyResolutionManagement {
 rootProject.name = "time-test"
 
 include(
-    "time-test-core",
-    "time-test-plain"
+    "core",
+    "core-test",
+    "plain",
+    "mockito",
+    "junit5-integration"
 )
+
+include("platform")

@@ -1,23 +1,7 @@
 plugins {
     id("java-library")
-    id("org.gradlex.java-module-dependencies")
-    id("org.gradlex.java-module-testing")
-}
-
-group = "org.time.test"
-version = "1.0.0-SNAPSHOT"
-
-configurations {
-    create("testOutput")
-}
-
-task("jarTest", Jar::class) {
-    from(sourceSets.test.get().output)
-    archiveClassifier.set("test")
-}
-
-artifacts {
-    add("testOutput", tasks.named("jarTest"))
+    id("java-test-fixtures")
+    id("org.time.test.base")
 }
 
 tasks.test {
@@ -30,16 +14,12 @@ java {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
+    api(platform(project(":platform")))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine")
-    testImplementation("org.junit.jupiter:junit-jupiter-params")
-
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    testFixturesApi(platform(project(":platform")))
+    testFixturesImplementation("org.junit.jupiter:junit-jupiter")
+    testFixturesRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
