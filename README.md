@@ -1,14 +1,19 @@
 # time-test
 This repo contains a handy tooling to enable you to test your time sensitive code. Forget about:
+- using `Thread.sleep` and wasting you budget for waitings within your tests
 - making a Spring bean from `java.time.Clock` and injecting it everywhere
 - manually mocking `java.time.Clock` with some mock library
 
+Instead you can use developer friendly API for managing time. See [Getting started](https://github.com/gallyamb/time-test/edit/main/README.md#getting-started)
 # Getting started
 There are two different approaches to start integration with this library:
-1. when you have a lot of legacy code
-2. when you just start your project from scratch
+1. when you have a lot of legacy code, and do not want to rewrite anything
+2. when you just start your project from scratch, and have a freedom of actions
 
-In both cases you can just include `org.time.test:time-test-core:0.1.0` and `org.time.test:time-test-mockito:0.1.0` in your tests classpath and write code like
+In both cases you can just include `org.time.test:time-test-core:0.1.0` and `org.time.test:time-test-mockito:0.1.0` in your tests classpath
+
+## Example
+
 ```java
 // just fixed the time at specififc moment
 NowTest.withMoment(OffsetDateTime.parse("2020-05-12T11:23:55T-04:00"), () -> {
@@ -29,8 +34,72 @@ NowTest.withMoment(OffsetDateTime.parse("2020-05-12T11:23:55T-04:00"), () -> {
 })
 ```
 
-This approach will work. Even library code will reflect time changes. But of course there will be some limitations: clock changes will be visilbe only within current thread. This is often enough
+# Testing concurrent code
 
-If you want for some reason test concurrent code, that works with time, you have another option - `org.time:time-core:0.1.0` and `org.time.test:time-test-plain:0.1.0`!
+The above approach will work. Even library code will reflect time changes. But of course there will be some limitations: clock changes will be visilbe only within current thread. This is often enough
+
+If you want for some reason to test concurrent code, that works with time, you have another option - `org.time:time-core:0.1.0` and `org.time.test:time-test-plain:0.1.0`!
 
 Adding `org.time:time-core:0.1.0` to your production classpath allows you to obtain current time from `Now.offsetDateTime()` and other methods (there are a lot in `org.time.Now`). And adding `org.time.test:time-test-plain:0.1.0` allows you to change time not only within one thread, but all threads at once. Of course, it'll work only if you obtain time instances from `org.time.Now`. But it's not such a big deal, if you want to get testable code
+
+## Example
+
+```java
+// MyService.java
+public class MyService {
+  public OffsetDateTime getTimeBasedResult() {
+    return Now.offsetDateTime();
+  }
+}
+
+// MyServiceTest.java
+public class MyServiceTest {
+
+  @Test
+  public void testMyService_Concurrent() {
+    var myService = new MyService();
+
+    // just fixed the time at specififc moment
+    var time = Now.withMoment(OffsetDateTime.parse("2020-05-12T11:23:55T-04:00"), () -> {
+      var result = new AtomicReference<OffsetDateTime>();
+      new Thread(() -> {
+        result.set(myService.getTimeBasedResult());
+      }).start();
+      while (result.get() == null) {
+        Thread.sleep(100);
+      }
+      return result.get();
+    }
+
+    Assertions.assertEqual(OffsetDateTime.parse("2020-05-12T11:23:55T-04:00"), time)
+  }
+}
+```
+
+# JUnit5 integration
+
+There are JUnit5 integration available. With this you can write more obviuous tests. Just include `org.time.test:time-test-junit5-integration:0.1.0`
+
+## Example
+
+```java
+// will fix the time at the test start moment for every test
+@FixedTime
+public class MyTest {
+
+  @Test
+  public void testOffsetDateTimesDifference() {
+    var start = OffsetDateTime.now();
+    var end = OffsetDateTime.now().plusHours(5);
+
+    // This will never become flaky, because time is fixed
+    Assertions.assertEquals(Duration.parse("PT5H"), Duration.between(start, end));
+  }
+
+  @Test
+  @FixedTime("2020-05-12T11:23:55T-04:00")
+  public void testAtSpecificTime() {
+    // you can write test assuming that time is always fixed at specific moment
+  }
+}
+```
