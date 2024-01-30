@@ -1,16 +1,13 @@
 # time-test
 This repo contains a handy tooling to enable you to test your time sensitive code. Forget about:
-- using `Thread.sleep` and wasting you budget for waitings within your tests
+- using `Thread.sleep` and wasting you CPU budget for waitings within your tests
 - making a Spring bean from `java.time.Clock` and injecting it everywhere
-- manually mocking `java.time.Clock` with some mock library
+- manually mocking `java.time.Clock` with some mock library (with more verbosity)
 
 Instead you can use developer friendly API for managing time. See [Getting started](https://github.com/gallyamb/time-test/edit/main/README.md#getting-started)
-# Getting started
-There are two different approaches to start integration with this library:
-1. when you have a lot of legacy code, and do not want to rewrite anything
-2. when you just start your project from scratch, and have a freedom of actions
 
-In both cases you can just include `org.time.test:time-test-core:0.1.0` and `org.time.test:time-test-mockito:0.1.0` in your tests classpath
+# Getting started
+The easiest way to integrate this library is to include `org.time.test:time-test-core:0.1.0` and `org.time.test:time-test-mockito:0.1.0` in your tests classpath
 
 ## Example
 
