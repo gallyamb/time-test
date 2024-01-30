@@ -1,7 +1,7 @@
-module org.time.test.core.test {
-    exports org.time.test.core.test;
+module io.github.gallyamb.time.test.core.test {
+    exports io.github.gallyamb.time.test.core.test;
 
-    requires transitive org.time.test.core;
+    requires transitive io.github.gallyamb.time.test.core;
 
     requires transitive org.junit.jupiter.api;
     requires transitive org.junit.jupiter.params;

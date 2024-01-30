@@ -1,6 +1,6 @@
-module org.time.test.spring.test {
-    exports org.time.test.junit5.test;
+module io.github.gallyamb.time.test.junit.test {
+    exports io.github.gallyamb.time.test.junit.test;
 
-    requires org.time.test.spring;
-    requires org.time.test.core.test;
+    requires io.github.gallyamb.time.test.junit;
+    requires io.github.gallyamb.time.test.core.test;
 }

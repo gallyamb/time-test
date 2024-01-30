@@ -1,5 +1,5 @@
 plugins {
-    id("org.time.test.platform")
+    id("io.github.gallyamb.time.platform")
 }
 
 dependencies {

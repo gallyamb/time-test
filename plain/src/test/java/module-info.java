@@ -1,6 +1,6 @@
-module org.time.test.plain.test {
-    exports org.time.test.plain.test;
+module io.github.gallyamb.time.test.plain.test {
+    exports io.github.gallyamb.time.test.plain.test;
 
-    requires org.time.test.plain;
-    requires org.time.test.core.test;
+    requires io.github.gallyamb.time.test.plain;
+    requires io.github.gallyamb.time.test.core.test;
 }

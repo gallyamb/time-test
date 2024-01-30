@@ -7,7 +7,8 @@ This repo contains a handy tooling to enable you to test your time sensitive cod
 Instead you can use developer friendly API for managing time. See [Getting started](https://github.com/gallyamb/time-test/edit/main/README.md#getting-started)
 
 # Getting started
-The easiest way to integrate this library is to include `org.time.test:time-test-core:0.1.0` and `org.time.test:time-test-mockito:0.1.0` in your tests classpath
+The easiest way to integrate this library is to include `io.github.gallyamb.time.test:time-test-core:0.1.0`
+and `io.github.gallyamb.time.test:time-test-mockito:0.1.0` in your tests classpath
 
 ## Example
 
@@ -33,11 +34,17 @@ NowTest.withMoment(OffsetDateTime.parse("2020-05-12T11:23:55T-04:00"), () -> {
 
 # Testing concurrent code
 
-The above approach will work. Even library code will reflect time changes. But of course there will be some limitations: clock changes will be visilbe only within current thread. This is often enough
+The above approach will work. Even library code will reflect time changes. But of course there will be some limitations:
+clock changes will be visilbe only within current thread. This is often enough
 
-If you want for some reason to test concurrent code, that works with time, you have another option - `org.time:time-core:0.1.0` and `org.time.test:time-test-plain:0.1.0`!
+If you want for some reason to test concurrent code, that works with time, you have another
+option - `io.github.gallyamb.time:time-core:0.1.0` and `io.github.gallyamb.time.test:time-test-plain:0.1.0`!
 
-Adding `org.time:time-core:0.1.0` to your production classpath allows you to obtain current time from `Now.offsetDateTime()` and other methods (there are a lot in `org.time.Now`). And adding `org.time.test:time-test-plain:0.1.0` allows you to change time not only within one thread, but all threads at once. Of course, it'll work only if you obtain time instances from `org.time.Now`. But it's not such a big deal, if you want to get testable code
+Adding `io.github.gallyamb.time:time-core:0.1.0` to your production classpath allows you to obtain current time
+from `Now.offsetDateTime()` and other methods (there are a lot in `io.github.gallyamb.time.Now`). And
+adding `io.github.gallyamb.time.test:time-test-plain:0.1.0` allows you to change time not only within one thread, but
+all threads at once. Of course, it'll work only if you obtain time instances from `org.time.Now`. But it's not such a
+big deal, if you want to get testable code
 
 ## Example
 
@@ -75,7 +82,8 @@ public class MyServiceTest {
 
 # JUnit5 integration
 
-There are JUnit5 integration available. With this you can write more obviuous tests. Just include `org.time.test:time-test-junit5-integration:0.1.0`
+There are JUnit5 integration available. With this you can write more obviuous tests. Just
+include `io.github.gallyamb.time.test:time-test-junit5-integration:0.1.0`
 
 ## Example
 
