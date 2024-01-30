@@ -36,8 +36,6 @@ public @interface FixedTime {
      * {@link java.time.format.DateTimeFormatter#ISO_ZONED_DATE_TIME} formatted datetime<br/>
      * <b>or</b><br/>
      * leave empty to apply current system default datetime
-     *
-     * @return value of this annotation
      */
     String value() default "";
 }
