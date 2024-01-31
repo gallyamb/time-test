@@ -15,6 +15,9 @@ import org.junit.platform.launcher.TestIdentifier;
 
 import static org.junit.platform.commons.support.AnnotationSupport.findAnnotation;
 
+/**
+ * {@link TestExecutionListener} that sets current time within test using {@link FixedTime}
+ */
 public class TimeTestExecutionListener implements TestExecutionListener {
     private static Optional<FixedTime> getFixedTime(TestIdentifier testIdentifier) {
         return tryGetFixedTimeFromMethodSource(testIdentifier).or(() -> tryGetFixedTimeFromClassSource(testIdentifier));

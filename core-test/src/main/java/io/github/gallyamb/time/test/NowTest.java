@@ -21,7 +21,7 @@ public class NowTest {
      * Fixates current datetime and all consequent time changes will be performed only via {@link NowTest}'s method
      * calls
      *
-     * <h2>Example</h2>
+     * <h4>Example</h4>
      * <pre>
      * NowTest.withCurrentMoment(() -> {
      *     // time here will be constantly fixed at the moment
@@ -53,6 +53,7 @@ public class NowTest {
      * For example see {@link #withCurrentMoment(Runnable)}
      *
      * @param job the job to be performed with fixed time
+     * @param <T> type of the job's result
      *
      * @return result of the job execution
      */
@@ -67,6 +68,7 @@ public class NowTest {
      * <p>
      * For example see {@link #withCurrentMoment(Runnable)}
      *
+     * @param instant the instant of the datetime moment. The {@link ZoneOffset#UTC} zone id will be used
      * @param job the job to be performed with fixed time in UTC
      */
     public static void withUtcMoment(Instant instant, Runnable job) {
@@ -79,7 +81,9 @@ public class NowTest {
      * <p>
      * For example see {@link #withCurrentMoment(Runnable)}
      *
-     * @param job the job to be performed with fixed time in UTC
+     * @param instant the instant of the datetime moment. The {@link ZoneOffset#UTC} zone id will be used
+     * @param job     the job to be performed with fixed time in UTC
+     * @param <T>     type of the job's result
      *
      * @return result of the job execution
      */
@@ -93,7 +97,9 @@ public class NowTest {
      * <p>
      * For example see {@link #withCurrentMoment(Runnable)}
      *
-     * @param job the job to be performed with fixed time in current default time zone
+     * @param instant the instant of the datetime moment. The {@link ZoneId} for specified instant will be fetched from
+     *                system defaults
+     * @param job     the job to be performed with fixed time in current default time zone
      */
     public static void withDefaultZoneMoment(Instant instant, Runnable job) {
         withDefaultZoneMoment(instant, toSupplier(job));
@@ -105,7 +111,10 @@ public class NowTest {
      * <p>
      * For example see {@link #withCurrentMoment(Runnable)}
      *
-     * @param job the job to be performed with fixed time in current default time zone
+     * @param instant the instant of the datetime moment. The {@link ZoneId} for specified instant will be fetched from
+     *                system defaults
+     * @param job     the job to be performed with fixed time in current default time zone
+     * @param <T>     type of the job's result
      *
      * @return result of the job execution
      */
@@ -119,7 +128,9 @@ public class NowTest {
      * <p>
      * For example see {@link #withCurrentMoment(Runnable)}
      *
-     * @param job the job to be performed with fixed time in specified {@code zoneId} time zone
+     * @param instant the instant of the datetime moment
+     * @param zoneId  the zone, at which this instant should be applied
+     * @param job     the job to be performed with fixed time in specified {@code zoneId} time zone
      */
     public static void withMoment(Instant instant, ZoneId zoneId, Runnable job) {
         withMoment(instant, zoneId, toSupplier(job));
@@ -131,7 +142,10 @@ public class NowTest {
      * <p>
      * For example see {@link #withCurrentMoment(Runnable)}
      *
-     * @param job the job to be performed with fixed time in specified {@code zoneId} time zone
+     * @param instant the instant of the datetime moment
+     * @param zoneId  the zone, at which this instant should be applied
+     * @param job     the job to be performed with fixed time in specified {@code zoneId} time zone
+     * @param <T>     type of the job's result
      *
      * @return result of the job execution
      */
@@ -146,7 +160,8 @@ public class NowTest {
      * <p>
      * For example see {@link #withCurrentMoment(Runnable)}
      *
-     * @param job the job to be performed with fixed time equal to supplied {@code dateTime}
+     * @param dateTime the datetime with offset to be used as current time
+     * @param job      the job to be performed with fixed time equal to supplied {@code dateTime}
      */
     public static void withMoment(OffsetDateTime dateTime, Runnable job) {
         withMoment(dateTime, toSupplier(job));
@@ -159,7 +174,9 @@ public class NowTest {
      * <p>
      * For example see {@link #withCurrentMoment(Runnable)}
      *
-     * @param job the job to be performed with fixed time equal to supplied {@code dateTime}
+     * @param dateTime the datetime with offset to be used as current time
+     * @param job      the job to be performed with fixed time equal to supplied {@code dateTime}
+     * @param <T>      type of the job's result
      *
      * @return result of the job execution
      */
@@ -174,7 +191,8 @@ public class NowTest {
      * <p>
      * For example see {@link #withCurrentMoment(Runnable)}
      *
-     * @param job the job to be performed with fixed time equal to supplied {@code dateTime}
+     * @param dateTime the zoned datetime to be used as current time
+     * @param job      the job to be performed with fixed time equal to supplied {@code dateTime}
      */
     public static void withMoment(ZonedDateTime dateTime, Runnable job) {
         withMoment(dateTime, toSupplier(job));
@@ -187,7 +205,9 @@ public class NowTest {
      * <p>
      * For example see {@link #withCurrentMoment(Runnable)}
      *
-     * @param job the job to be performed with fixed time equal to supplied {@code dateTime}
+     * @param dateTime the zoned datetime to be used as current time
+     * @param job      the job to be performed with fixed time equal to supplied {@code dateTime}
+     * @param <T>      type of the job's result
      *
      * @return result of the job execution
      */
@@ -199,9 +219,7 @@ public class NowTest {
      * Increases current datetime to the specified {@code offset}. If current clock is not fixed, then it will not be
      * fixed within this method call too
      *
-     * <h2>Examples</h2>
-     *
-     * <h3>Example with fixed clock</h3>
+     * <h4>Example with fixed clock</h4>
      * <pre>
      * NowTest.withMoment(OffsetDateTime.parse("2020-01-01T00:00:30Z"), () -> {
      *     // time here will be constantly fixed at the 2020-01-01T00:00:30Z
@@ -218,7 +236,7 @@ public class NowTest {
      * });
      * </pre>
      *
-     * <h3>Example with non-fixed clock</h3>
+     * <h4>Example with non-fixed clock</h4>
      * <pre>
      * var now = Now.offsetDateTime(); // equal to current datetime
      *
@@ -236,7 +254,8 @@ public class NowTest {
      * );
      * </pre>
      *
-     * @param job the job to be performed with time shifted to specified {@code offset}
+     * @param offset the non-negative duration, that will be added to current time
+     * @param job    the job to be performed with time shifted to specified {@code offset}
      */
     public static void withOffset(Duration offset, Runnable job) {
         withOffset(offset, toSupplier(job));
@@ -248,7 +267,9 @@ public class NowTest {
      * <p>
      * For example see {@link #withOffset(Duration, Runnable)}
      *
-     * @param job the job to be performed with time shifted to specified {@code offset}
+     * @param offset the non-negative duration, that will be added to current time
+     * @param job    the job to be performed with time shifted to specified {@code offset}
+     * @param <T>    type of the job's result
      *
      * @return result of the job execution
      */
@@ -266,7 +287,7 @@ public class NowTest {
      * <p>
      * <b>Important:</b> this method can be called only when clock already modified
      *
-     * <h2>Example</h2>
+     * <h4>Example</h4>
      * <pre>
      * NowTest.withCurrentMoment(() -> {
      *     var start = Now.offsetDateTime();
@@ -287,7 +308,7 @@ public class NowTest {
      * <p>
      * <b>Important:</b> this method can be called only when clock already modified
      *
-     * <h2>Example</h2>
+     * <h4>Example</h4>
      * <pre>
      * NowTest.withCurrentMoment(() -> {
      *     var start = Now.offsetDateTime();
@@ -297,6 +318,8 @@ public class NowTest {
      *     Assertions.assertEquals(Duration.ofSeconds(1000), Duration.between(start, end));
      * });
      * </pre>
+     *
+     * @param seconds the non-negative seconds count, that will be added to current time
      */
     public static void tick(int seconds) {
         tick(Duration.ofSeconds(seconds));
@@ -308,7 +331,7 @@ public class NowTest {
      * <p>
      * <b>Important:</b> this method can be called only when clock already modified
      *
-     * <h2>Example</h2>
+     * <h4>Example</h4>
      * <pre>
      * NowTest.withCurrentMoment(() -> {
      *     var start = Now.offsetDateTime();
@@ -319,6 +342,8 @@ public class NowTest {
      *     Assertions.assertEquals(Duration.ofDays(300), Duration.between(start, end));
      * });
      * </pre>
+     *
+     * @param duration the non-negative duration, that will be added to current time
      */
     public static void tick(Duration duration) {
         if (!ClockState.changed()) {
