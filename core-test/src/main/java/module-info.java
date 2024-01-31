@@ -1,10 +1,13 @@
-import org.time.ClockStateListener;
-import org.time.test.impl.ClockState;
+import io.github.gallyamb.time.ClockStateListener;
+import io.github.gallyamb.time.test.impl.ClockState;
 
-module org.time.test.core {
+/**
+ * This module contains API to be used in tests to manipulate with current time
+ */
+module io.github.gallyamb.time.test.core {
     provides ClockStateListener with ClockState;
 
-    exports org.time.test;
+    exports io.github.gallyamb.time.test;
 
-    requires transitive org.time.core;
+    requires transitive io.github.gallyamb.time.core;
 }

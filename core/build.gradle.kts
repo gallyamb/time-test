@@ -1,3 +1,3 @@
 plugins {
-    id("org.time.test.java-library")
+    id("io.github.gallyamb.time.java-library")
 }
