@@ -4,6 +4,9 @@ import java.time.Clock;
 
 import io.github.gallyamb.time.ClockHandler;
 
+/**
+ * An implementation of {@link ClockHandler} that uses the {@link Clock#systemDefaultZone() default} clock
+ */
 public class SystemClockHandler implements ClockHandler {
     @Override
     public Clock getClock() {

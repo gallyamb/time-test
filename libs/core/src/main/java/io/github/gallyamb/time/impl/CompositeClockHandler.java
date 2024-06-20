@@ -10,8 +10,11 @@ import io.github.gallyamb.time.ClockHandler;
 import io.github.gallyamb.time.ClockStateListener;
 import io.github.gallyamb.time.ThreadLocalClockHandler;
 
+/**
+ * An implementation of {@link ClockHandler}, that allows to use multiple {@link ClockHandler}'s at once
+ */
 public class CompositeClockHandler implements ClockHandler {
-    public static final Comparator<ClockHandler> THREAD_LOCAL_HANDLERS_LAST = (a, b) -> {
+    private static final Comparator<ClockHandler> THREAD_LOCAL_HANDLERS_LAST = (a, b) -> {
         boolean aIsLimited = a instanceof ThreadLocalClockHandler;
         boolean bIsLimited = b instanceof ThreadLocalClockHandler;
         if (aIsLimited == bIsLimited) {
@@ -25,6 +28,11 @@ public class CompositeClockHandler implements ClockHandler {
             .toList();
     private final Collection<ClockHandler> delegates;
 
+    /**
+     * Constructs new {@link CompositeClockHandler}
+     *
+     * @param delegates {@link ClockHandler}s used to delegate calls
+     */
     public CompositeClockHandler(Collection<ClockHandler> delegates) {
         this.delegates = delegates.stream()
                 .sorted(THREAD_LOCAL_HANDLERS_LAST)
