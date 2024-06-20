@@ -3,18 +3,33 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositories.mavenCentral()
+    repositories {
+        mavenCentral()
+    }
 }
 
 rootProject.name = "time-test"
 
-val filesWithinLibsDirectory: Array<File> = file("libs").listFiles() ?: arrayOf()
-
-filesWithinLibsDirectory.filter { it.isDirectory }
-    .map { it.name }
-    .forEach {
-        include(it)
-        project(":$it").projectDir = file("libs/$it")
-    }
-
 include("platform")
+includeProjects("libs")
+
+////////////////////////////////////////////////////
+//                 Extra functions                //
+////////////////////////////////////////////////////
+
+fun includeProjects(projectsRoot: String) {
+    val filesWithinRootDirectory: Array<File> = file(projectsRoot).listFiles() ?: arrayOf()
+
+    filesWithinRootDirectory.filter { it.isDirectory }
+        .map { it.name }
+        .forEach { projectName ->
+            include(projectName)
+            val project = project(":$projectName")
+
+            project.projectDir = file("$projectsRoot/$projectName")
+
+            require(project.buildFile.isFile) {
+                "Build file ${project.buildFile} for project ${project.name} does not exist."
+            }
+        }
+}

@@ -16,6 +16,9 @@ import io.github.gallyamb.time.impl.SystemClockHandler;
  * what are you doing
  */
 public class InternalClockHandler {
+    /**
+     * Singleton instance of the {@link ClockHandler} used to manage time in JVM instance
+     */
     public static final ClockHandler INSTANCE;
 
     static {

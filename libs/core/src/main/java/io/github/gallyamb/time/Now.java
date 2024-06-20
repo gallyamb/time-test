@@ -17,7 +17,7 @@ import io.github.gallyamb.time.internal.InternalClockHandler;
  * <p>
  * Also, you should notice that currently there is no any implementation, that could manipulate the current time in code
  * that's not use this library in thread other than test's original thread
- * <p>
+ *
  * <table>
  *     <caption>Do you able to change clock state?</caption>
  *     <tr>
@@ -50,6 +50,8 @@ public final class Now {
     }
 
     /**
+     * @param zone time zone at which {@link OffsetDateTime} will be obtained
+     *
      * @return current time in the {@link OffsetDateTime} representation with offset specified by the {@code zone} time
      * zone
      */
@@ -58,6 +60,8 @@ public final class Now {
     }
 
     /**
+     * @param offset zone offset at which {@link OffsetDateTime} will be obtained
+     *
      * @return current time in the {@link OffsetDateTime} representation with specified {@code offset} offset
      */
     public static OffsetDateTime offsetDateTime(ZoneOffset offset) {
@@ -72,6 +76,8 @@ public final class Now {
     }
 
     /**
+     * @param zone time zone at which {@link ZonedDateTime} will be obtained
+     *
      * @return current time in the {@link ZonedDateTime} representation with specified {@code zone} time zone
      */
     public static ZonedDateTime zonedDateTime(ZoneId zone) {
@@ -79,6 +85,8 @@ public final class Now {
     }
 
     /**
+     * @param offset zone offset at which {@link ZonedDateTime} will be obtained
+     *
      * @return current time in the {@link ZonedDateTime} representation with time zone specified by {@code offset}
      * offset
      */
@@ -94,6 +102,8 @@ public final class Now {
     }
 
     /**
+     * @param zone time zone at which {@link LocalDateTime} will be obtained
+     *
      * @return current local date/time at specified {@code zone} time zone
      */
     public static LocalDateTime localDateTime(ZoneId zone) {
@@ -101,6 +111,8 @@ public final class Now {
     }
 
     /**
+     * @param offset zone offset at which {@link LocalDateTime} will be obtained
+     *
      * @return current local date/time at specified {@code offset} offset
      */
     public static LocalDateTime localDateTime(ZoneOffset offset) {
@@ -115,6 +127,8 @@ public final class Now {
     }
 
     /**
+     * @param zone time zone at which {@link LocalDate} will be obtained
+     *
      * @return current local date at specified {@code zone} time zone
      */
     public static LocalDate localDate(ZoneId zone) {
@@ -122,6 +136,8 @@ public final class Now {
     }
 
     /**
+     * @param offset zone offset at which {@link LocalDate} will be obtained
+     *
      * @return current local date at specified {@code offset} offset
      */
     public static LocalDate localDate(ZoneOffset offset) {
@@ -136,6 +152,8 @@ public final class Now {
     }
 
     /**
+     * @param zone time zone at which {@link LocalTime} will be obtained
+     *
      * @return current local time at specified {@code zone} time zone
      */
     public static LocalTime localTime(ZoneId zone) {
@@ -143,6 +161,8 @@ public final class Now {
     }
 
     /**
+     * @param offset zone offset at which {@link LocalTime} will be obtained
+     *
      * @return current local time at specified {@code offset} offset
      */
     public static LocalTime localTime(ZoneOffset offset) {
