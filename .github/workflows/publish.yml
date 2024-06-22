@@ -8,9 +8,6 @@
 name: Publish release
 
 on:
-  push:
-    tags:
-      - releases/v*
   release:
     types: [ created ]
 
@@ -48,11 +45,12 @@ jobs:
           echo 'Start GPG decrypting'
           gpg --quiet --batch --yes --decrypt --passphrase='${{ secrets.GPG_SECRET_KEY_CONTENT_PASSWORD }}' \
             --output secret.gpg publish_key.gpg
-          echo "::set-env name=RELEASE_VERSION::${GITHUB_REF:11}"
+          echo "RELEASE_VERSION=${GITHUB_REF:10}" >> $GITHUB_ENV
 
       - name: Publish with Gradle
         run: |
-          ./gradlew publish -PsigningKey=secret.gpg -PsigningKeyId=${{ secrets.SIGNING_KEYID }} -PsigningPassword=${{ secrets.SIGNING_PASSWORD }} \
+          ./gradlew publish \
+            -PsigningKey=secret.gpg -PsigningKeyId=${{ secrets.SIGNING_KEYID }} -PsigningPassword=${{ secrets.SIGNING_PASSWORD }} \
             -PCI=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
