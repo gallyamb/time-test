@@ -1,3 +1,4 @@
+import org.gradle.internal.impldep.org.eclipse.jgit.util.Hex
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -70,7 +71,7 @@ signing {
     val signingPassword = findStringProperty("SIGNING_PASSWORD")
 
     val signingKeyFile = findStringProperty("SIGNING_KEY")
-    val signingKey = Files.readString(Paths.get(signingKeyFile))
+    val signingKey = toHexString(Files.readAllBytes(Paths.get(signingKeyFile)))
 
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 
@@ -88,4 +89,15 @@ fun findStringProperty(key: String): String {
 
 fun isCI(): Boolean {
     return findStringProperty("IS_CI") == "true"
+}
+
+fun toHexString(b: ByteArray): String {
+    val hex = "0123456789abcdef".toCharArray()
+    val c = CharArray(b.size * 2)
+    for (i in b.indices) {
+        val v = b[i].toInt() and 255
+        c[i * 2] = hex[v ushr 4]
+        c[i * 2 + 1] = hex[v and 15]
+    }
+    return String(c)
 }
