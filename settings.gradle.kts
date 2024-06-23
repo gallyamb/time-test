@@ -24,12 +24,19 @@ fun includeProjects(projectsRoot: String) {
         .map { it.name }
         .forEach { projectName ->
             include(projectName)
-            val project = project(":$projectName")
+            project(":$projectName").apply {
+                projectDir = file("$projectsRoot/$projectName")
 
-            project.projectDir = file("$projectsRoot/$projectName")
+                name = when (name) {
+                    "core" -> "time-core"
+                    "core-test" -> "time-test-core"
+                    else -> "time-test-${name}"
+                }
 
-            require(project.buildFile.isFile) {
-                "Build file ${project.buildFile} for project ${project.name} does not exist."
+                require(buildFile.isFile) {
+                    "Build file $buildFile for project $name does not exist."
+                }
+
             }
         }
 }
