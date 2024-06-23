@@ -69,9 +69,7 @@ signing {
     }
     val signingKeyId = findStringProperty("SIGNING_KEY_ID")
     val signingPassword = findStringProperty("SIGNING_PASSWORD")
-
-    val signingKeyFile = findStringProperty("SIGNING_KEY")
-    val signingKey = toHexString(Files.readAllBytes(Paths.get(signingKeyFile)))
+    val signingKey = findStringProperty("SIGNING_KEY")
 
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 
@@ -89,15 +87,4 @@ fun findStringProperty(key: String): String {
 
 fun isCI(): Boolean {
     return findStringProperty("IS_CI") == "true"
-}
-
-fun toHexString(b: ByteArray): String {
-    val hex = "0123456789abcdef".toCharArray()
-    val c = CharArray(b.size * 2)
-    for (i in b.indices) {
-        val v = b[i].toInt() and 255
-        c[i * 2] = hex[v ushr 4]
-        c[i * 2 + 1] = hex[v and 15]
-    }
-    return String(c)
 }
