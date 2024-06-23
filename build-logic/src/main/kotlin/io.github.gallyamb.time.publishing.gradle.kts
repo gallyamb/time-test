@@ -1,3 +1,6 @@
+import java.nio.file.Files
+import java.nio.file.Paths
+
 plugins {
     `maven-publish`
     signing
@@ -63,9 +66,12 @@ signing {
     if (!isCI()) {
         return@signing
     }
+    println("HERE")
     val signingKeyId = findStringProperty("SIGNING_KEY_ID")
-    val signingKey = findStringProperty("SIGNING_KEY")
     val signingPassword = findStringProperty("SIGNING_PASSWORD")
+
+    val signingKeyFile = findStringProperty("SIGNING_KEY")
+    val signingKey = Files.readString(Paths.get(signingKeyFile))
 
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 
@@ -77,10 +83,12 @@ signing {
 //                 Extra functions                //
 ////////////////////////////////////////////////////
 
-fun findStringProperty(key: String): String? {
-    return System.getenv(key)
+fun findStringProperty(key: String): String {
+    return (System.getenv(key) ?: "").also {
+        println("$key=$it")
+    }
 }
 
 fun isCI(): Boolean {
-    return findStringProperty("CI") == "true"
+    return findStringProperty("IS_CI") == "true"
 }
