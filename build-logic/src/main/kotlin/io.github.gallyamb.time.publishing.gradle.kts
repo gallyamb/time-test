@@ -90,5 +90,5 @@ fun findStringProperty(key: String): String {
 }
 
 fun isCI(): Boolean {
-    return findStringProperty("CI") == "true"
+    return findStringProperty("IS_CI") == "true"
 }

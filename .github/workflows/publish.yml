@@ -52,7 +52,7 @@ jobs:
       - name: Publish with Gradle
         run: ./gradlew publish
         env:
-          CI: true
+          IS_CI: true
           SIGNING_KEY: ${{ runner.temp }}/secret.gpg
           SIGNING_KEY_ID: ${{ secrets.SIGNING_KEYID }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
