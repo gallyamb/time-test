@@ -66,6 +66,7 @@ signing {
     if (!isCI()) {
         return@signing
     }
+    println("HERE")
     val signingKeyId = findStringProperty("SIGNING_KEY_ID")
     val signingPassword = findStringProperty("SIGNING_PASSWORD")
 
@@ -83,7 +84,9 @@ signing {
 ////////////////////////////////////////////////////
 
 fun findStringProperty(key: String): String {
-    return System.getenv(key) ?: ""
+    return (System.getenv(key) ?: "").also {
+        println("$key=$it")
+    }
 }
 
 fun isCI(): Boolean {
