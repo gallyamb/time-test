@@ -1,3 +1,6 @@
+import java.nio.file.Files
+import kotlin.io.path.Path
+
 plugins {
     `maven-publish`
     signing
@@ -64,8 +67,10 @@ signing {
         return@signing
     }
     val signingKeyId = findStringProperty("SIGNING_KEY_ID")
-    val signingKey = findStringProperty("SIGNING_KEY")
     val signingPassword = findStringProperty("SIGNING_PASSWORD")
+
+    val signingKeyFile = findStringProperty("SIGNING_KEY")
+    val signingKey = Files.readString(Path(signingKeyFile))
 
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 
@@ -77,7 +82,7 @@ signing {
 //                 Extra functions                //
 ////////////////////////////////////////////////////
 
-fun findStringProperty(key: String): String? {
+fun findStringProperty(key: String): String {
     return System.getenv(key)
 }
 
