@@ -83,7 +83,7 @@ signing {
 ////////////////////////////////////////////////////
 
 fun findStringProperty(key: String): String {
-    return System.getenv(key)
+    return System.getenv(key) ?: ""
 }
 
 fun isCI(): Boolean {
