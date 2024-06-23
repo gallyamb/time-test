@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core"))
-    testImplementation(project(":plain"))
-    testImplementation(testFixtures(project(":core-test")))
+    implementation(project(":time-core"))
+    testImplementation(project(":time-test-plain"))
+    testImplementation(testFixtures(project(":time-test-core")))
 
     implementation("org.junit.platform:junit-platform-launcher")
 }

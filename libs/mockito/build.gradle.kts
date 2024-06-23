@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":core"))
-    testImplementation(testFixtures(project(":core-test")))
+    api(project(":time-core"))
+    testImplementation(testFixtures(project(":time-test-core")))
 
     implementation("org.mockito:mockito-core")
 }

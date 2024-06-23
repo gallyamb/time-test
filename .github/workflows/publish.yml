@@ -49,10 +49,11 @@ jobs:
 
       - name: Publish with Gradle
         run: |
-          ./gradlew publish \
-            -PsigningKey=secret.gpg -PsigningKeyId=${{ secrets.SIGNING_KEYID }} -PsigningPassword=${{ secrets.SIGNING_PASSWORD }} \
-            -PCI=true
+          echo "SIGNING_KEY=$(cat secret.gpg)" >> $GITHUB_ENV
+          ./gradlew publish
         env:
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEYID }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_PASSWORD }}
