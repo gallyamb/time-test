@@ -36,7 +36,7 @@ jobs:
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"
       - name: Build and test with Gradle
-        run: ./gradlew build test
+        run: ./gradlew test
 
       - name: Prepare to publish
         run: |
@@ -52,6 +52,7 @@ jobs:
       - name: Publish with Gradle
         run: ./gradlew publish
         env:
+          CI: true
           SIGNING_KEY: ${{ runner.temp }}/secret.gpg
           SIGNING_KEY_ID: ${{ secrets.SIGNING_KEYID }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
