@@ -1,7 +1,3 @@
-import org.gradle.internal.impldep.org.eclipse.jgit.util.Hex
-import java.nio.file.Files
-import java.nio.file.Paths
-
 plugins {
     `maven-publish`
     signing
@@ -42,21 +38,35 @@ publishing {
     }
 
     if (isCI()) {
-        repositories {
-            maven {
-                name = "OSSRH"
-                url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-                credentials {
-                    username = findStringProperty("OSSRH_USERNAME")
-                    password = findStringProperty("OSSRH_TOKEN")
+        val isSnapshotVersion = version.toString().endsWith("-SNAPSHOT")
+        if (isSnapshotVersion){
+            repositories {
+                maven {
+                    name = "OSSRH"
+                    url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                    credentials {
+                        username = findStringProperty("OSSRH_USERNAME")
+                        password = findStringProperty("OSSRH_TOKEN")
+                    }
                 }
             }
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/gallyamb/time-test")
-                credentials {
-                    username = findStringProperty("GITHUB_ACTOR")
-                    password = findStringProperty("GITHUB_TOKEN")
+        } else {
+            repositories {
+                maven {
+                    name = "OSSRH"
+                    url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                    credentials {
+                        username = findStringProperty("OSSRH_USERNAME")
+                        password = findStringProperty("OSSRH_TOKEN")
+                    }
+                }
+                maven {
+                    name = "GitHubPackages"
+                    url = uri("https://maven.pkg.github.com/gallyamb/time-test")
+                    credentials {
+                        username = findStringProperty("GITHUB_ACTOR")
+                        password = findStringProperty("GITHUB_TOKEN")
+                    }
                 }
             }
         }
@@ -64,12 +74,15 @@ publishing {
 }
 
 signing {
-    if (!isCI()) {
-        return@signing
-    }
     val signingKeyId = findStringProperty("SIGNING_KEY_ID")
     val signingPassword = findStringProperty("SIGNING_PASSWORD")
     val signingKey = findStringProperty("SIGNING_KEY")
+
+    // if any of the signing parameters are omitted, then do not perform signing
+    // perhaps, it's publishing to local repository
+    if (signingKey == null || signingPassword == null || signingKeyId == null) {
+        return@signing
+    }
 
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
 
@@ -81,10 +94,10 @@ signing {
 //                 Extra functions                //
 ////////////////////////////////////////////////////
 
-fun findStringProperty(key: String): String {
-    return System.getenv(key) ?: ""
+fun findStringProperty(key: String): String? {
+    return System.getenv(key)
 }
 
 fun isCI(): Boolean {
-    return findStringProperty("IS_CI") == "true"
+    return findStringProperty("CI") == "true"
 }
