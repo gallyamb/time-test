@@ -1,10 +1,6 @@
-import org.gradle.internal.impldep.org.eclipse.jgit.util.Hex
-import java.nio.file.Files
-import java.nio.file.Paths
-
 plugins {
     `maven-publish`
-    signing
+    id("com.vanniktech.maven.publish.base")
 
     id("io.github.gallyamb.time.base")
 }
@@ -41,50 +37,42 @@ publishing {
         }
     }
 
-    if (isCI()) {
-        repositories {
-            maven {
-                name = "OSSRH"
-                url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-                credentials {
-                    username = findStringProperty("OSSRH_USERNAME")
-                    password = findStringProperty("OSSRH_TOKEN")
-                }
-            }
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/gallyamb/time-test")
-                credentials {
-                    username = findStringProperty("GITHUB_ACTOR")
-                    password = findStringProperty("GITHUB_TOKEN")
-                }
-            }
+    repositories {
+        maven {
+            name = "localStaging"
+            url = rootProject.layout.buildDirectory.dir("staging-repository").get().asFile.toURI()
         }
     }
 }
 
-signing {
-    if (!isCI()) {
-        return@signing
+val releaseRequested = providers.gradleProperty("release").map(String::toBoolean).orElse(false)
+val signArtifacts = providers.gradleProperty("signArtifacts").map(String::toBoolean).orElse(false)
+mavenPublishing {
+    publishToMavenCentral()
+    if (releaseRequested.get() || signArtifacts.get()) {
+        signAllPublications()
     }
-    val signingKeyId = findStringProperty("SIGNING_KEY_ID")
-    val signingPassword = findStringProperty("SIGNING_PASSWORD")
-    val signingKey = findStringProperty("SIGNING_KEY")
-
-    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-
-    sign(publishing.publications[project.name])
 }
 
-
-////////////////////////////////////////////////////
-//                 Extra functions                //
-////////////////////////////////////////////////////
-
-fun findStringProperty(key: String): String {
-    return System.getenv(key) ?: ""
+val validateCentralRelease = tasks.register("validateCentralRelease") {
+    group = "verification"
+    description = "Checks release identity and required publishing configuration without exposing secrets."
+    doLast {
+        require(releaseRequested.get()) { "Central publishing requires -Prelease=true" }
+        val releaseVersion = project.version.toString()
+        require(Regex("[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?").matches(releaseVersion)
+            && !releaseVersion.endsWith("-SNAPSHOT")) { "A fixed releaseVersion is required" }
+        require(providers.environmentVariable("RELEASE_TAG").orNull == "v$releaseVersion") {
+            "RELEASE_TAG must match v$releaseVersion"
+        }
+        listOf("mavenCentralUsername", "mavenCentralPassword", "signingInMemoryKey").forEach { key ->
+            require(!providers.gradleProperty(key).orNull.isNullOrBlank()) { "Missing release property: $key" }
+        }
+    }
 }
 
-fun isCI(): Boolean {
-    return findStringProperty("IS_CI") == "true"
+tasks.withType<PublishToMavenRepository>().configureEach {
+    if (repository.name == "mavenCentral") {
+        dependsOn(validateCentralRelease)
+    }
 }
