@@ -38,7 +38,13 @@ import io.github.gallyamb.time.internal.InternalClockHandler;
  * </table>
  */
 public final class Now {
-    private static Clock clock() {
+    /**
+     * Returns the currently active clock for APIs accepting a {@link Clock}.
+     * A returned clock is a snapshot; obtain it again after changing test time.
+     *
+     * @return the active clock
+     */
+    public static Clock clock() {
         return InternalClockHandler.INSTANCE.getClock();
     }
 

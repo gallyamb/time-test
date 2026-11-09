@@ -1,6 +1,7 @@
 package io.github.gallyamb.time.test;
 
 import java.time.*;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import io.github.gallyamb.time.internal.InternalClockHandler;
@@ -322,6 +323,15 @@ public class NowTest {
      * @param seconds the non-negative seconds count, that will be added to current time
      */
     public static void tick(int seconds) {
+        tick((long) seconds);
+    }
+
+    /**
+     * Advances a modified clock by a non-negative number of seconds.
+     *
+     * @param seconds the number of seconds to advance
+     */
+    public static void tick(long seconds) {
         tick(Duration.ofSeconds(seconds));
     }
 
@@ -361,19 +371,69 @@ public class NowTest {
         InternalClockHandler.INSTANCE.setClock(Clock.offset(clock(), duration));
     }
 
-    private static <T> T withClock(Clock newClock, Supplier<T> job) {
-        boolean clockIsChanged = ClockState.changed();
-        Clock oldClock = clock();
-        InternalClockHandler.INSTANCE.setClock(newClock);
+    /**
+     * Runs a job with a supplied clock, restoring the previous state even if the job fails.
+     * This also supports running clocks with negative offsets.
+     *
+     * @param newClock the clock to use
+     * @param job the job to execute
+     */
+    public static void withClock(Clock newClock, Runnable job) {
+        withClock(newClock, toSupplier(job));
+    }
 
-        try {
+    /**
+     * Runs a supplier with a supplied clock, restoring the previous state on exit.
+     *
+     * @param newClock the clock to use
+     * @param job the supplier to execute
+     * @param <T> the result type
+     * @return the supplier result
+     */
+    public static <T> T withClock(Clock newClock, Supplier<T> job) {
+        try (ClockScope ignored = useClock(newClock)) {
             return job.get();
-        } finally {
-            if (clockIsChanged) {
-                InternalClockHandler.INSTANCE.setClock(oldClock);
+        }
+    }
+
+    /**
+     * Opens a clock scope for lifecycle APIs with separate setup and teardown callbacks.
+     * Close nested scopes in reverse order on the thread that opened them. With a global
+     * handler, callers must serialize independent tests which change the clock.
+     * Prefer {@link #withClock(Clock, Runnable)} when a callback can be used.
+     *
+     * @param newClock a non-null clock
+     * @return a scope that restores the previous clock state when closed
+     */
+    public static ClockScope useClock(Clock newClock) {
+        Objects.requireNonNull(newClock, "newClock");
+        ClockScope scope = new ClockScope(clock(), ClockState.changed());
+        InternalClockHandler.INSTANCE.setClock(newClock);
+        return scope;
+    }
+
+    /** Restores the clock state captured by {@link #useClock(Clock)} exactly once. */
+    public static final class ClockScope implements AutoCloseable {
+        private final Clock previousClock;
+        private final boolean previouslyChanged;
+        private boolean closed;
+
+        private ClockScope(Clock previousClock, boolean previouslyChanged) {
+            this.previousClock = previousClock;
+            this.previouslyChanged = previouslyChanged;
+        }
+
+        @Override
+        public void close() {
+            if (closed) {
+                return;
+            }
+            if (previouslyChanged) {
+                InternalClockHandler.INSTANCE.setClock(previousClock);
             } else {
                 InternalClockHandler.INSTANCE.reset();
             }
+            closed = true;
         }
     }
 
