@@ -1,2 +1,4 @@
 group = "io.github.gallyamb.time"
-version = "0.1.0"
+version = providers.gradleProperty("releaseVersion")
+    .orElse(providers.gradleProperty("version"))
+    .get()

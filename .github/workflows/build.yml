@@ -35,4 +35,6 @@ jobs:
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"
       - name: Build and test with Gradle
-        run: ./gradlew build test
+        run: |
+          python3 verification/test_release_tag.py
+          ./gradlew build test
