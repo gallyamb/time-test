@@ -1,5 +1,6 @@
 package io.github.gallyamb.time.test.plain.classpath;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -59,4 +60,28 @@ class ClasspathClockTest {
             }
         });
     }
+    @Test
+    void publicClockScopeRestoresStateAfterSeparateLifecycleCallbacks() {
+        assertThrows(IllegalStateException.class, NowTest::tick);
+        var outer = NowTest.useClock(Clock.fixed(START, ZoneId.of("Europe/Paris")));
+        try {
+            assertEquals(START, Now.clock().instant());
+            NowTest.withClock(Clock.offset(Now.clock(), Duration.ofHours(-2)), () -> {
+                assertEquals(Instant.parse("2031-04-12T08:30:00Z"), Now.instant());
+                NowTest.tick(3_000_000_000L);
+                assertEquals(Instant.parse("2126-05-06T13:50:00Z"), Now.instant());
+            });
+            assertEquals(START, Now.instant());
+            assertThrows(NullPointerException.class, () -> NowTest.useClock(null));
+            assertEquals(START, Now.instant());
+        } finally {
+            outer.close();
+        }
+        assertThrows(IllegalStateException.class, NowTest::tick);
+        NowTest.withUtcMoment(START.plusSeconds(1), () -> {
+            outer.close(); // Closing an already closed scope cannot reset a later scope.
+            assertEquals(Instant.parse("2031-04-12T10:30:01Z"), Now.instant());
+        });
+    }
+
 }
