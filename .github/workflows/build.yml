@@ -36,5 +36,5 @@ jobs:
           build-scan-terms-of-use-agree: "yes"
       - name: Build and test with Gradle
         run: |
-          python3 verification/test_release_tag.py
+          python3 -m unittest discover -s verification -p 'test_*.py'
           ./gradlew build test
