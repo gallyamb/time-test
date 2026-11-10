@@ -37,6 +37,15 @@ Configure the GitHub `production` environment with these secrets:
 - `SIGNING_KEYID`: signing key ID (optional for a complete in-memory key).
 - `SIGNING_PASSWORD`: key passphrase, if any.
 
+The workflow prefers the complete `MAVEN_CENTRAL_*` pair. If neither is set,
+it accepts `OSSRH_USERNAME` and `OSSRH_PASSWORD` as aliases for an existing Portal
+token. It never mixes credentials from the two pairs. An old OSSRH-issued token
+is not a Portal token: renaming it will not make it valid. Generate a Portal token
+at <https://central.sonatype.com/usertoken> if needed; see the
+[Sonatype authentication requirements](https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#authentication).
+Existing signing secrets can be reused with a valid signing key whose public
+part is available for signature verification.
+
 The workflow checks out the release tag and builds/tests without credentials.
 Only its publishing step receives secrets. Create a matching tag such as
 `v0.1.1`, or manually dispatch the publishing workflow with an existing tag.
